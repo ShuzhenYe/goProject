@@ -8,6 +8,7 @@ import ("fmt"
 	elastic "gopkg.in/olivere/elastic.v3"
 	"github.com/pborman/uuid"
 	"reflect"
+	"strings"
 )
 
 type Location struct {
@@ -111,7 +112,7 @@ const (
 	//PROJECT_ID = "around-xxx"
 	//BT_INSTANCE = "around-post"
 	// Needs to update this URL if you deploy it to cloud.
-	ES_URL = "http://146.148.35.78:9200"
+	ES_URL = "http://35.226.237.46:9200"
 )
 
 
@@ -165,8 +166,9 @@ func handlerSearch(w http.ResponseWriter, r *http.Request) {
 		p := item.(Post) // p = (Post) item
 		fmt.Printf("Post by %s: %s at lat %v and lon %v\n", p.User, p.Message, p.Location.Lat, p.Location.Lon)
 		// TODO(student homework): Perform filtering based on keywords such as web spam etc.
-		ps = append(ps, p)
-
+		if !strings.Contains(p.Message, "badWords") {
+			ps = append(ps, p)
+		}
 	}
 	js, err := json.Marshal(ps)
 	if err != nil {
